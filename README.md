@@ -1,0 +1,1 @@
+This is a plugin which contains many diffrent features and is basically everything I've learned so far. If you don't want every feature, just change the 'true' value of the feature, which you don't want, to 'false' in the config file.
