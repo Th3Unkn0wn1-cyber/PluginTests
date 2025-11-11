@@ -1,6 +1,25 @@
 database:
-  host: "localhost"
-  port: "3306"
-  user: "root"
-  password: "2011"
-  database_name: "mcplugin"
+  host: ""
+  port: ""
+  user: ""
+  password: ""
+  database_name: ""
+listener_toggle:
+  xpbottlebreaklistener: true
+  shearsheeplistener: true
+  joinleavelistener: true
+  cheatsinterface: true #listener + command
+  chatcolorlistener: true
+  dblisteners: true
+command_toggle:
+  gmc: true
+  gms: true
+  gma: true
+  gsp: true
+  die: true
+  heal: true
+  fly: true
+  invulnerable: true
+  message: true
+  smsg: true
+  enderchest: true
