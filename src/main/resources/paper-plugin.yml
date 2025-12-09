@@ -1,0 +1,116 @@
+name: PluginTest
+version: '1.0'
+main: me.th3unkn0wn1.pluginTests.PluginTests
+api-version: '1.21'
+
+commands:
+  die:
+    description: An easy way to kill yourself.
+    usage: /<command>
+  gmc:
+    description: An easy way to switch between creative and your last gamemode.
+    usage: /<command>
+    permission: gamemode.switch.creative
+  gms:
+    description: An easy way to switch between survival and your last gamemode.
+    usage: /<command>
+    permission: gamemode.switch.survival
+  gma:
+    description: An easy way to switch between adventure and your last gamemode.
+    usage: /<command>
+    permission: gamemode.switch.adventure
+  gsp:
+    description: An easy way to switch between spectator and your last gamemode.
+    usage: /<command>
+    permission: gamemode.switch.spectator
+  heal:
+    description: An easy way to heal yourself.
+    usage: /<command>
+    permission: player.heal
+  fly:
+    description: Fly in survival or adventure.
+    usage: /<command>
+    permission: player.fly
+  invulnerable:
+    description: Get invulnerable in survival.
+    usage: /<command>
+    permission: player.invulnerable
+    aliases:
+      - god
+  message:
+    description: Send a direct private message to another player.
+    usage: /<command> <name> <message>
+    aliases:
+      - msg
+  smsg:
+    description: Send a message with standard prefix and a custom message behind that
+    usage: /<command> <message>
+    permission: send.serverMessage
+  enderchest:
+    description: Open Enderchest.
+    usage: /<command>
+    aliases:
+      - ec
+  cheatinterface:
+    description: Open a cheatinterface.
+    usage: /<command>
+    permission: gui.cheat
+    aliases:
+      - cheatint
+  togglepvp:
+    description: Toggle pvp in specific zone (FaWe).
+    usage: /<command>
+    permission: fawe.togglepvp
+    aliases:
+      - pvp
+
+permissions:
+  gamemode.switch.creative:
+    description: Allows player to switch the gamemode to creative.
+    default: op
+    children:
+      gamemode.switch.survival: true
+  gamemode.switch.survival:
+    description: Allows player to switch the gamemode to survival.
+    default: op
+  gamemode.switch.adventure:
+    description: Allows player to switch the gamemode to adventure.
+    default: op
+    children:
+      gamemode.switch.survival: true
+  gamemode.switch.spectator:
+    description: Allows player to switch the gamemode to spectator.
+    default: op
+  player.fly:
+    description: Allows player to fly.
+    default: op
+  player.invulnerable:
+    description: Allows player to be invulnerable.
+    default: op
+  player.heal:
+    description: Allows player to heal.
+    default: op
+  gui.cheat:
+    description: Quick menu for op commands.
+    default: op
+    children:
+      gamemode.switch.creative: true
+      gamemode.switch.survival: true
+      gamemode.switch.adventure: true
+      gamemode.switch.spectator: true
+      player.fly: true
+      player.invulnerable: true
+      player.heal: true
+  send.serverMessage:
+    description: Send a special message with Server Prefix.
+    default: op
+    children:
+      gamemode.switch.creative: true
+      gamemode.switch.survival: true
+      gamemode.switch.adventure: true
+      gamemode.switch.spectator: true
+      gui.cheat: true
+      player.fly: true
+      player.invulnerable: true
+      player.heal: true
+      fawe.togglepvp: true
