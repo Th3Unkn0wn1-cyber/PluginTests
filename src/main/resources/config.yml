@@ -11,6 +11,8 @@ listener_toggle:
   cheatsinterface: true #listener + command
   chatcolorlistener: true
   dblisteners: true
+  zonelistener: true #needed for zone and message if you're in or out
+  zoneexpension: true #same here like above
 command_toggle:
   gmc: true
   gms: true
@@ -24,3 +26,17 @@ command_toggle:
   smsg: true
   enderchest: true
   togglepvp: true
+zone:
+  world: "world"
+  corner1:
+    x: 0
+    y: 0
+    z: 0
+  corner2:
+    x: 10
+    y: 100
+    z: 10
+papi:
+  messages:
+    pvp_false: "You're in a safezone."
+    pvp_true: "You're not in a safezone."

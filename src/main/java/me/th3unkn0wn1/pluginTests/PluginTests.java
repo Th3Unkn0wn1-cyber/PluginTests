@@ -8,19 +8,22 @@ import me.th3unkn0wn1.pluginTests.Listeners.*;
 import me.th3unkn0wn1.pluginTests.Data.Database;
 import me.th3unkn0wn1.pluginTests.Commands.Gamemodes.GameModeCommands;
 import me.th3unkn0wn1.pluginTests.Commands.Kill.DieCommand;
+import me.th3unkn0wn1.pluginTests.Listeners.Scoreboards.SBManager;
+import me.th3unkn0wn1.pluginTests.Listeners.Scoreboards.Zone.ZoneListener;
+import me.th3unkn0wn1.pluginTests.PAPIExpensions.ZoneExpension;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.*;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 public final class PluginTests extends JavaPlugin {
 
     public static PluginTests pluginTests;
     private final HashMap<UUID, GameMode> lastMode = new HashMap<>();
-
-    private Database database;
 
     @Override
     public void onEnable() {
@@ -30,103 +33,118 @@ public final class PluginTests extends JavaPlugin {
 
         saveDefaultConfig();
 
-        this.database = new Database(
+        Database database = new Database(
                 getConfig().getString("database.host"),
                 getConfig().getString("database.port"),
                 getConfig().getString("database.user"),
                 getConfig().getString("database.password"),
                 getConfig().getString("database.database_name"));
         try {
-            this.database.initializeDatabase();
+            database.initializeDatabase();
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Could not initialize database.");
         }
 
+        SBManager sbManager = new SBManager();
+        ZoneListener zone = new ZoneListener(getConfig(), sbManager);
+
         //Listener Toggle
-        boolean XPBottleBreakListener = this.pluginTests.getConfig().getBoolean("listener_toggle.xpbottlebreaklistener");
-        boolean ShearSheepListener = this.pluginTests.getConfig().getBoolean("listener_toggle.shearsheeplistener");
-        boolean JoinLeaveListener = this.pluginTests.getConfig().getBoolean("listener_toggle.joinleavelistener");
-        boolean CheatsInterface =  this.pluginTests.getConfig().getBoolean("listener_toggle.cheatsinterface");
-        boolean ChatColorListener = this.pluginTests.getConfig().getBoolean("listener_toggle.chatcolorlistener");
-        boolean DBListeners = this.pluginTests.getConfig().getBoolean("listener_toggle.dblisteners");
+        boolean XPBottleBreakListener = pluginTests.getConfig().getBoolean("listener_toggle.xpbottlebreaklistener");
+        boolean ShearSheepListener = pluginTests.getConfig().getBoolean("listener_toggle.shearsheeplistener");
+        boolean JoinLeaveListener = pluginTests.getConfig().getBoolean("listener_toggle.joinleavelistener");
+        boolean CheatsInterface =  pluginTests.getConfig().getBoolean("listener_toggle.cheatsinterface");
+        boolean ChatColorListener = pluginTests.getConfig().getBoolean("listener_toggle.chatcolorlistener");
+        boolean DBListeners = pluginTests.getConfig().getBoolean("listener_toggle.dblisteners");
+        boolean ZoneListener = pluginTests.getConfig().getBoolean("listener_toggle.zonelistener");
+        boolean ZoneExpension = pluginTests.getConfig().getBoolean("listener_toggle.zoneexpension");
 
         //Command Toggle
-        boolean gmc = this.pluginTests.getConfig().getBoolean("command_toggle.gmc");
-        boolean gms = this.pluginTests.getConfig().getBoolean("command_toggle.gms");
-        boolean gma = this.pluginTests.getConfig().getBoolean("command_toggle.gma");
-        boolean gsp = this.pluginTests.getConfig().getBoolean("command_toggle.gsp");
-        boolean die = this.pluginTests.getConfig().getBoolean("command_toggle.gdi");
-        boolean heal = this.pluginTests.getConfig().getBoolean("command_toggle.heal");
-        boolean fly =  this.pluginTests.getConfig().getBoolean("command_toggle.fly");
-        boolean invulnerable = this.pluginTests.getConfig().getBoolean("command_toggle.invulnerable");
-        boolean message =  this.pluginTests.getConfig().getBoolean("command_toggle.message");
-        boolean smsg = this.pluginTests.getConfig().getBoolean("command_toggle.smsg");
-        boolean enderchest = this.pluginTests.getConfig().getBoolean("command_toggle.enderchest");
-        boolean togglepvp = this.pluginTests.getConfig().getBoolean("command_toggle.togglepvp");
+        boolean gmc = pluginTests.getConfig().getBoolean("command_toggle.gmc");
+        boolean gms = pluginTests.getConfig().getBoolean("command_toggle.gms");
+        boolean gma = pluginTests.getConfig().getBoolean("command_toggle.gma");
+        boolean gsp = pluginTests.getConfig().getBoolean("command_toggle.gsp");
+        boolean die = pluginTests.getConfig().getBoolean("command_toggle.gdi");
+        boolean heal = pluginTests.getConfig().getBoolean("command_toggle.heal");
+        boolean fly =  pluginTests.getConfig().getBoolean("command_toggle.fly");
+        boolean invulnerable = pluginTests.getConfig().getBoolean("command_toggle.invulnerable");
+        boolean message =  pluginTests.getConfig().getBoolean("command_toggle.message");
+        boolean smsg = pluginTests.getConfig().getBoolean("command_toggle.smsg");
+        boolean enderchest = pluginTests.getConfig().getBoolean("command_toggle.enderchest");
+        boolean togglepvp = pluginTests.getConfig().getBoolean("command_toggle.togglepvp");
 
 
         // register Events
-        if (XPBottleBreakListener == true) {
+        if (XPBottleBreakListener) {
             getServer().getPluginManager().registerEvents(new XPBottleBreakListener(), this);
         }
-        if (ShearSheepListener == true) {
+        if (ShearSheepListener) {
             getServer().getPluginManager().registerEvents(new ShearSheepListener(), this);
         }
-        if (JoinLeaveListener == true) {
+        if (JoinLeaveListener) {
             getServer().getPluginManager().registerEvents(new JoinLeaveListener(), this);
         }
-        if (CheatsInterface == true) {
+        if (CheatsInterface) {
             getServer().getPluginManager().registerEvents(new CheatsInterface(), this);
-            this.getCommand("cheatinterface").setExecutor(new CheatsInterface());
+            Objects.requireNonNull(this.getCommand("cheatinterface")).setExecutor(new CheatsInterface());
         }
-        if (ChatColorListener == true) {
+        if (ChatColorListener) {
             getServer().getPluginManager().registerEvents(new ChatColorListener(), this);
         }
-        if (DBListeners == true) {
+        if (DBListeners) {
             getServer().getPluginManager().registerEvents(new DBListeners(database), this);
+        }
+        if (ZoneListener) {
+            getServer().getPluginManager().registerEvents(zone, this);
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            if (ZoneExpension) {
+                new ZoneExpension(this, zone).register();
+            }
+        } else {
+            System.out.println("Could not find PlaceholderAPI!");
         }
 
 
         // Commands
         GameModeCommands gm = new GameModeCommands(lastMode);
 
-        if (gmc == true) {
-            this.getCommand("gmc").setExecutor(gm);
+        if (gmc) {
+            Objects.requireNonNull(this.getCommand("gmc")).setExecutor(gm);
         }
-        if (gms == true) {
-            this.getCommand("gms").setExecutor(gm);
+        if (gms) {
+            Objects.requireNonNull(this.getCommand("gms")).setExecutor(gm);
         }
-        if (gma == true) {
-            this.getCommand("gma").setExecutor(gm);
+        if (gma) {
+            Objects.requireNonNull(Objects.requireNonNull(this.getCommand("gma"))).setExecutor(gm);
         }
-        if (gsp == true) {
-            this.getCommand("gsp").setExecutor(gm);
+        if (gsp) {
+            Objects.requireNonNull(this.getCommand("gsp")).setExecutor(gm);
         }
-        if (die == true) {
-            this.getCommand("die").setExecutor(new DieCommand());
+        if (die) {
+            Objects.requireNonNull(this.getCommand("die")).setExecutor(new DieCommand());
         }
-        if (heal == true) {
-            this.getCommand("heal").setExecutor(new HealCommand());
+        if (heal) {
+            Objects.requireNonNull(this.getCommand("heal")).setExecutor(new HealCommand());
         }
-        if (fly == true) {
-            this.getCommand("fly").setExecutor(new FlyCommand());
+        if (fly) {
+            Objects.requireNonNull(this.getCommand("fly")).setExecutor(new FlyCommand());
         }
-        if (invulnerable == true) {
-            this.getCommand("invulnerable").setExecutor(new InvulnerableCommand());
+        if (invulnerable) {
+            Objects.requireNonNull(this.getCommand("invulnerable")).setExecutor(new InvulnerableCommand());
         }
-        if (message == true) {
-            this.getCommand("message").setExecutor(new MessageCommand());
+        if (message) {
+            Objects.requireNonNull(this.getCommand("message")).setExecutor(new MessageCommand());
         }
-        if (smsg == true) {
-            this.getCommand("smsg").setExecutor(new MessageCommand());
+        if (smsg) {
+            Objects.requireNonNull(this.getCommand("smsg")).setExecutor(new MessageCommand());
         }
-        if (enderchest == true) {
-            this.getCommand("enderchest").setExecutor(new EnderChestCommand());
+        if (enderchest) {
+            Objects.requireNonNull(Objects.requireNonNull(this.getCommand("enderchest"))).setExecutor(new EnderChestCommand());
         }
-
-        if (togglepvp == true) {
-            this.getCommand("togglepvp").setExecutor(new TogglePvPCommand());
+        if (togglepvp) {
+            Objects.requireNonNull(this.getCommand("togglepvp")).setExecutor(new TogglePvPCommand());
         }
 
     }

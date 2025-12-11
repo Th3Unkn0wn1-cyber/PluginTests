@@ -114,3 +114,11 @@ permissions:
       player.invulnerable: true
       player.heal: true
       fawe.togglepvp: true
+  togglepvp:
+    description: Toggle pvp in specific zone (FaWe).
+    default: op
+    children:
+      gamemode.switch.creative: true
+      gamemode.switch.survival: true
+      gamemode.switch.spectator: true
+      player.fly: true
